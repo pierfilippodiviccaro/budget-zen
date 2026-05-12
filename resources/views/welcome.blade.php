@@ -78,21 +78,21 @@
 
     </div>
 
-    {{-- STATS STRIP --}}
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-bottom:40px;">
-        <div class="bz-stat navy" style="text-align:center;">
-            <div class="bz-stat-label">utenti attivi</div>
-            <div class="bz-stat-value">2.400+</div>
-        </div>
-        <div class="bz-stat green" style="text-align:center;">
-            <div class="bz-stat-label">transazioni tracciate</div>
-            <div class="bz-stat-value"></div>
-        </div>
-        <div class="bz-stat blue" style="text-align:center;">
-            <div class="bz-stat-label">budget rispettati</div>
-            <div class="bz-stat-value">73%</div>
-        </div>
+   {{-- STATS STRIP --}}
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin:0 auto 40px; max-width:1200px; padding:0 20px;">
+    <div class="bz-stat navy" style="text-align:center;">
+        <div class="bz-stat-label">utenti attivi</div>
+        <div class="bz-stat-value">{{ number_format($stats['active_users']) }}+</div>
     </div>
+    <div class="bz-stat green" style="text-align:center;">
+        <div class="bz-stat-label">transazioni tracciate</div>
+        <div class="bz-stat-value">{{ number_format($stats['total_transactions']) }}+</div>
+    </div>
+    <div class="bz-stat blue" style="text-align:center;">
+        <div class="bz-stat-label">budget rispettati</div>
+        <div class="bz-stat-value">{{ $stats['budget_success_rate'] }}%</div>
+    </div>
+</div>
 
     {{-- CTA BOTTOM --}}
     <div class="bz-card" style="text-align:center; padding:36px 24px; border:1px solid #dde6f5;">

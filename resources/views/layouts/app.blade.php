@@ -422,7 +422,7 @@
                         Dashboard
                     </a>
 
-                    <a href="{{ route('transactions.index') }}"
+                    {{-- <a href="{{ route('transactions.index') }}"
                        class="bz-nav-item {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
@@ -436,15 +436,15 @@
                             <path stroke-linecap="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18-3a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3m18-3V6"/>
                         </svg>
                         Budget
-</a>
+</a> --}}
 
-                    <a href="{{ route('categories.index') }}"
+                    {{--<a href="{{ route('categories.index') }}"
                        class="bz-nav-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z"/>
                         </svg>
                         Categorie
-                    </a>
+                    </a>--}}
 
                     <p class="bz-nav-label">sistema</p>
 

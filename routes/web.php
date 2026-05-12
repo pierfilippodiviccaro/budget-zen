@@ -27,12 +27,13 @@ Route::middleware(['auth','verified'])
     Route::get('/budgets', [BudgetController::class,'index'])
     ->name('index');
     
+    Route::get('/transactions', [TransactionController::class, 'index'])
+        ->name('transactions.index');
+        Route::get('/budgets',[BudgetController::class,'index'])
+        ->name('budgets.index');
+        Route::get('/categories',[CategoryController::class, 'index'])
+        ->name('categories.index');
 });
-Route::get('/transactions', [TransactionController::class, 'index'])
-    ->name('transactions.index');
-    Route::get('/budgets',[BudgetController::class,'index'])
-    ->name('budgets.index');
-    Route::get('/categories',[CategoryController::class, 'index'])
-    ->name('categories.index');
+Route::get('/', [App\Http\Controllers\LandingController::class, 'index'])->name('landing');
 
 require __DIR__.'/auth.php';
