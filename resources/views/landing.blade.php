@@ -622,29 +622,7 @@
                     mensili in un unico posto. Semplice, veloce, chiaro.
                 </p>
 
-                <div class="bz-ctas">
-                    @guest
-                        <a href="{{ route('register') }}" class="bz-btn-primary">
-                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                            </svg>
-                            Inizia gratis
-                        </a>
-                        <a href="{{ route('login') }}" class="bz-btn-secondary">
-                            Accedi
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
-                            </svg>
-                        </a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="bz-btn-primary">
-                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                            </svg>
-                            Vai al Dashboard
-                        </a>
-                    @endguest
-                </div>
+                
             </div>
 
             {{-- Floating dashboard mockup --}}

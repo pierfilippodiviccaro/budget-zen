@@ -268,10 +268,9 @@
 
     /* MAIN */
     .bz-main {
-        margin-left: 220px;
         flex: 1;
-        padding: 32px 32px;
-        min-height: calc(100vh - 54px);
+        padding: 0;
+        min-height: 100vh;
     }
 
     /* ALERTS */
@@ -368,102 +367,10 @@
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
 
-    <div class="wrapper">
+   
 
-        <!-- TOPBAR -->
-        <header class="bz-topbar">
-            <a href="{{ url('/') }}" class="bz-logo">
-                <div class="bz-logo-mark">
-                    <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
-                        <path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="bz-logo-name">BudgetZen</div>
-                    <div class="bz-logo-sub">finance tracker</div>
-                </div>
-            </a>
-
-            <div class="bz-topbar-right">
-                <button class="bz-topbar-icon" aria-label="Notifiche">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
-                    </svg>
-                </button>
-                <div class="bz-user-chip">
-                    <div class="bz-user-avatar">
-    {{ Auth::check() ? strtoupper(substr(Auth::user()->name, 0, 2)) : '?' }}
-</div>
-<span class="bz-user-name">{{ Auth::user()?->name ?? 'Ospite' }}</span>
-                    <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-                    </svg>
-                </div>
-            </div>
-        </header>
-
-        <div class="bz-shell">
-
-            <!-- SIDEBAR -->
-            <aside class="bz-sidebar">
-                <nav class="bz-nav">
-
-                    <p class="bz-nav-label">panoramica</p>
-
-                    <a href="{{ route('dashboard') }}"
-                       class="bz-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="3" y="3" width="7" height="7" rx="1"/>
-                            <rect x="14" y="3" width="7" height="7" rx="1"/>
-                            <rect x="3" y="14" width="7" height="7" rx="1"/>
-                            <rect x="14" y="14" width="7" height="7" rx="1"/>
-                        </svg>
-                        Dashboard
-                    </a>
-
-                    {{-- <a href="{{ route('transactions.index') }}"
-                       class="bz-nav-item {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
-                        </svg>
-                        Transazioni
-                    </a>
-
-                    <a href="{{ route('budgets.index') }}"
-                       class="bz-nav-item {{ request()->routeIs('budgets.*') ? 'active' : '' }}">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18-3a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3m18-3V6"/>
-                        </svg>
-                        Budget
-</a> --}}
-
-                    {{--<a href="{{ route('categories.index') }}"
-                       class="bz-nav-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3zM6 6h.008v.008H6V6z"/>
-                        </svg>
-                        Categorie
-                    </a>--}}
-
-                    <p class="bz-nav-label">sistema</p>
-
-                   
-
-                </nav>
-
-                <div class="bz-logout-wrap">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="bz-logout-btn">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
-                            </svg>
-                            Esci
-                        </button>
-                    </form>
-                </div>
-            </aside>
+       
+              
 
             <!-- MAIN -->
             <main class="bz-main">
