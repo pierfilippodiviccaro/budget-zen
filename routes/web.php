@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\BudgetController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Admin\BudgetController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,9 +28,11 @@ Route::middleware(['auth','verified'])
 ->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])
         ->name('transactions.index');
-        Route::get('/budgets',[BudgetController::class,'index'])
+    Route::post('/transactions', [TransactionController::class, 'store'])
+        ->name('transactions.store');
+    Route::get('/budgets',[BudgetController::class,'index'])
         ->name('budgets.index');
-        Route::get('/categories',[CategoryController::class, 'index'])
+    Route::get('/categories',[CategoryController::class, 'index'])
         ->name('categories.index');
 });
 Route::get('/', [App\Http\Controllers\LandingController::class, 'index'])->name('landing');
