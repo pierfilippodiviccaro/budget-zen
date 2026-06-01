@@ -84,13 +84,16 @@ class DashboardController extends Controller
                 ->whereBetween('date', [$start, $end])
                 ->sum('amount');
 
-            return [
-                'label'   => $d->translatedFormat('M'),
-                'income'  => $inc,
-                'expense' => $exp,
-            ];
-        });
 
+                
+                return [
+                    'label'   => $d->translatedFormat('M'),
+                    'income'  => $inc,
+                    'expense' => $exp,
+                    ];
+                    });
+                    
+                    $categories = Category::all();
         // passo 'month' e 'year' solo se li usi nel Blade
         $month = $now->month;
         $year  = $now->year;
@@ -104,7 +107,8 @@ class DashboardController extends Controller
             'byCategory',
             'trend',
             'month',
-            'year'
+            'year',
+            'categories'
         ));
     }
 }
