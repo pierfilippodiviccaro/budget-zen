@@ -606,10 +606,6 @@
         {{-- ══════════════════ HERO ══════════════════ --}}
         <section class="bz-hero">
             <div>
-                <div class="bz-badge">
-                    <div class="bz-badge-dot"></div>
-                    <span>finance tracker</span>
-                </div>
 
                 <h1>
                     Tieni tutto<br>
@@ -691,7 +687,7 @@
 
         <div class="bz-divider"></div>
 
-        {{-- ══════════════════ FEATURE CARDS ══════════════════ --}}
+        
         <div class="bz-section-label">Funzionalità</div>
 
         <div class="bz-features">
