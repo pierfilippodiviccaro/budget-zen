@@ -958,13 +958,7 @@
                     <div class="db-qs-value">{{ $recent->count() > 0 ? $recent->count() . '+' : '0' }}</div>
                 </div>
             </div>
-            <div class="db-qs" style="--qs-pale:#F3EEFF;">
-                <div class="db-qs-icon">🎯</div>
-                <div>
-                    <div class="db-qs-label">Budget attivi</div>
-                    <div class="db-qs-value">{{ $budgets->count() }}</div>
-                </div>
-            </div>
+            
             <div class="db-qs" style="--qs-pale:#E6F8F2;">
                 <div class="db-qs-icon">📁</div>
                 <div>
@@ -981,34 +975,8 @@
             </div>
         </div>
 
-        {{-- ── Trend + Torta ── --}}
-        <div class="db-grid-wide db-reveal" style="transition-delay:.15s">
-            <div class="db-card">
-                <div class="db-card-head">
-                    <div class="db-card-title">
-                        <div class="db-card-title-dot" style="--dot-color:var(--blue)"></div>
-                        Andamento ultimi 6 mesi
-                    </div>
-                </div>
-                <canvas id="trendChart" height="110"></canvas>
-            </div>
-            <div class="db-card">
-                <div class="db-card-head">
-                    <div class="db-card-title">
-                        <div class="db-card-title-dot" style="--dot-color:var(--purple)"></div>
-                        Spese per categoria
-                    </div>
-                </div>
-                @if($byCategory->isEmpty())
-                    <div class="db-empty">
-                        <span class="db-empty-icon">🍩</span>
-                        nessuna spesa questo mese
-                    </div>
-                @else
-                    <canvas id="catChart" height="190"></canvas>
-                @endif
-            </div>
-        </div>
+      
+       
 
         {{-- ── Transazioni + Budget ── --}}
         <div class="db-grid db-reveal" style="transition-delay:.2s">
@@ -1052,60 +1020,13 @@
                 @endif
             </div>
 
-            <div class="db-card">
-                <div class="db-card-head">
-                    <div class="db-card-title">
-                        <div class="db-card-title-dot" style="--dot-color:var(--purple)"></div>
-                        Budget del mese
-                    </div>
-                    <a href="{{ route('admin.budgets.index') }}" class="db-card-link">gestisci →</a>
-                </div>
-                @if($budgets->isEmpty())
-                    <div class="db-empty">
-                        <span class="db-empty-icon">🎯</span>
-                        nessun budget impostato
-                    </div>
-                @else
-                    <div class="db-budget-list">
-                        @foreach($budgets as $b)
-                            @php
-                                $pct = $b->percentage;
-                                $state = $pct >= 90 ? 'danger' : ($pct >= 70 ? 'warn' : 'ok');
-                                $stateColor = $state === 'danger' ? 'var(--red)' : ($state === 'warn' ? 'var(--amber)' : 'var(--teal)');
-                                $remaining = max(0, $b->amount_limit - $b->spent);
-                            @endphp
-                            <div class="db-budget-item">
-                                <div class="db-budget-top">
-                                    <span class="db-budget-name">
-                                        <span class="db-budget-name-dot" style="--state-color:{{ $stateColor }}"></span>
-                                        {{ $b->category?->name ?? 'Categoria' }}
-                                    </span>
-                                    <span class="db-budget-nums">
-                                        {{ number_format($b->spent, 0, ',', '.') }}€ /
-                                        {{ number_format($b->amount_limit, 0, ',', '.') }}€
-                                    </span>
-                                </div>
-                                <div class="db-track">
-                                    <div class="db-fill {{ $state }}" style="width:{{ $pct }}%"></div>
-                                </div>
-                                <div class="db-budget-bottom">
-                                    <span class="db-budget-pct {{ $state }}">{{ $pct }}%</span>
-                                    <span class="db-budget-remaining">rimangono
-                                        {{ number_format($remaining, 0, ',', '.') }}€</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
+            
 
         </div>
 
     </div>
 
-    {{-- ════════════════════════════════
-    MODAL AGGIUNGI TRANSAZIONE
-    ════════════════════════════════ --}}
+   
     <div class="bz-modal-overlay" id="txnModal" onclick="handleOverlayClick(event)">
         <div class="bz-modal">
 
