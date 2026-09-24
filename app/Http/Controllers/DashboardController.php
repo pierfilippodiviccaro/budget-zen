@@ -2,112 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Transaction;
-use App\Models\Budget;
-use App\Models\category;  // va bene, ma il model va in CamelCase
-use Carbon\Carbon;
+use App\Models\Category;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $now  = Carbon::now();
+        $userId = Auth::id();
 
-        // ── Totali mese corrente con range esplicito ──
-        $from = $now->copy()->startOfMonth();
-        $to   = $now->copy()->endOfMonth();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth   = Carbon::now()->endOfMonth();
 
-        $transactions = Transaction::where('user_id', $user->id)
-            ->whereBetween('date', [$from, $to])
+        // Transazioni del mese corrente — usate per le KPI (entrate/uscite/saldo) e per il donut categorie
+        $monthTxns = Transaction::where('user_id', $userId)
+            ->with('category')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->get();
 
-        $income  = $transactions->where('type', 'income')->sum('amount');
-        $expense = $transactions->where('type', 'expense')->sum('amount');
+        // KPI: entrate, uscite, saldo — SOLO mese corrente
+        $income  = $monthTxns->where('type', 'income')->sum('amount');
+        $expense = $monthTxns->where('type', 'expense')->sum('amount');
         $balance = $income - $expense;
 
-        // ── Ultime 5 transazioni ──
-        $recent = Transaction::where('user_id', $user->id)
+        // Ultime 10 transazioni in assoluto (non filtrate per mese, per mostrare l'attività più recente)
+        $recent = Transaction::where('user_id', $userId)
             ->with('category')
             ->orderByDesc('date')
-            ->limit(5)
-            ->get(); 
+            ->limit(10)
+            ->get();
 
-        // ── Budget mese corrente con spese per categoria ──
-        $budgets = Budget::where('user_id', $user->id)
-            ->whereMonth('start_date', $now->month)   
-            ->whereYear('start_date', $now->year)
-            ->with('category')
-            ->get()
-            ->map(function ($b) use ($user, $now) {
-                $start = $now->copy()->startOfMonth();
-                $end   = $now->copy()->endOfMonth();
-
-                $spent = Transaction::where('user_id', $user->id)
-                    ->where('category_id', $b->category_id)
-                    ->where('type', 'expense')
-                    ->whereBetween('date', [$start, $end])
-                    ->sum('amount');
-
-                $b->spent      = $spent;
-                $b->percentage = $b->amount_limit > 0
-                    ? min(100, round(($spent / $b->amount_limit) * 100))
-                    : 0;
-
-                return $b;
-            });
-
-        // ── Spese per categoria (grafico torta) ──
-        $byCategory = Transaction::where('user_id', $user->id)
+        // Ripartizione spese per categoria (solo uscite, mese corrente)
+        $byCategory = $monthTxns
             ->where('type', 'expense')
-            ->whereBetween('date', [$from, $to])
-            ->with('category')
-            ->get()
-            ->groupBy('category.name')
-            ->map(fn ($group) => $group->sum('amount'));
+            ->groupBy(fn($txn) => $txn->category->name ?? 'Senza categoria')
+            ->map(fn($group) => $group->sum('amount'))
+            ->sortDesc()
+            ->toArray();
 
-        // ── Andamento ultimi 6 mesi ──
-        $trend = collect(range(5, 0))->map(function ($i) use ($user) {
-            $d = Carbon::now()->subMonths($i);
-            $start = $d->copy()->startOfMonth();
-            $end   = $d->copy()->endOfMonth();
+        // Trend ultimi 6 mesi (entrate vs uscite)
+        $trend = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthDate  = Carbon::now()->subMonths($i);
+            $monthStart = $monthDate->copy()->startOfMonth();
+            $monthEnd   = $monthDate->copy()->endOfMonth();
 
-            $inc = Transaction::where('user_id', $user->id)
-                ->where('type', 'income')
-                ->whereBetween('date', [$start, $end])
-                ->sum('amount');
+            $monthData = Transaction::where('user_id', $userId)
+                ->whereBetween('date', [$monthStart, $monthEnd])
+                ->get();
 
-            $exp = Transaction::where('user_id', $user->id)
-                ->where('type', 'expense')
-                ->whereBetween('date', [$start, $end])
-                ->sum('amount');
+            $trend[] = [
+                'label'   => ucfirst($monthDate->translatedFormat('M')), // es. "Set"
+                'income'  => (float) $monthData->where('type', 'income')->sum('amount'),
+                'expense' => (float) $monthData->where('type', 'expense')->sum('amount'),
+            ];
+        }
 
-
-                
-                return [
-                    'label'   => $d->translatedFormat('M'),
-                    'income'  => $inc,
-                    'expense' => $exp,
-                    ];
-                    });
-                    
-                    $categories = Category::all();
-        // passo 'month' e 'year' solo se li usi nel Blade
-        $month = $now->month;
-        $year  = $now->year;
+        // Categorie per il select del modal "Nuova transazione"
+        $categories = Category::orderBy('name')->get();
 
         return view('dashboard', compact(
             'income',
             'expense',
             'balance',
             'recent',
-            'budgets',
             'byCategory',
             'trend',
-            'month',
-            'year',
             'categories'
         ));
     }
