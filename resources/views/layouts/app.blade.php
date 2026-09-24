@@ -362,6 +362,7 @@
         .bz-main { margin-left: 0; padding: 20px 16px; }
     }
     </style>
+    @stack('head')
 </head>
 <body>
     <div class="orb orb-1"></div>
