@@ -317,12 +317,17 @@ table.tx-table {
 </style>
 
 <div class="tx">
-
-    {{-- ── Header ── --}}
+{{-- ── Header ── --}}
     <div class="tx-header tx-reveal">
         <div>
             <h1>Le tue <em>transazioni</em>.</h1>
-            <p>storico completo · {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</p>
+            <p>
+                @if($showAll)
+                    storico completo &middot; tutte le transazioni
+                @else
+                    storico completo &middot; {{ $currentMonth->translatedFormat('F Y') }}
+                @endif
+            </p>
         </div>
         <a href="{{ route('dashboard') }}" style="
             display:inline-flex; align-items:center; gap:7px;
@@ -335,6 +340,37 @@ table.tx-table {
         " onmouseover="this.style.background='#1463A8'" onmouseout="this.style.background='#0B2545'">
             ← Dashboard
         </a>
+    </div>
+
+    {{-- ── Navigatore mese ── --}}
+    <div class="tx-month-nav tx-reveal" style="
+        display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;
+    ">
+        @if(!$showAll)
+            <a href="{{ route('admin.transactions.index', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}"
+               style="width:34px; height:34px; border-radius:10px; border:1.5px solid var(--border); background:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; color:var(--navy); font-size:14px;">
+                ←
+            </a>
+
+            <span style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--navy); padding:0 4px;">
+                {{ $currentMonth->translatedFormat('F Y') }}
+            </span>
+
+            <a href="{{ route('admin.transactions.index', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}"
+               style="width:34px; height:34px; border-radius:10px; border:1.5px solid var(--border); background:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; color:var(--navy); font-size:14px;">
+                →
+            </a>
+
+            <a href="{{ route('admin.transactions.index', ['all' => 1]) }}"
+               style="margin-left:auto; font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--blue); text-decoration:none; padding:8px 14px; border:1.5px solid var(--border); border-radius:100px;">
+                Vedi tutte le transazioni
+            </a>
+        @else
+            <a href="{{ route('admin.transactions.index') }}"
+               style="font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--blue); text-decoration:none; padding:8px 14px; border:1.5px solid var(--border); border-radius:100px;">
+                ← Torna al mese corrente
+            </a>
+        @endif
     </div>
 
     {{-- ── Summary strip ── --}}

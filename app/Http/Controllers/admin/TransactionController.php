@@ -8,20 +8,46 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon; 
 
 class TransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-{
-    $transactions = Transaction::where('user_id', Auth::id())
-        ->with('category')
-        ->orderByDesc('date')
-        ->get();
+ 
 
-    return view('transactions.index', compact('transactions'));
+ 
+public function index(Request $request)
+{
+    $showAll = $request->query('all') === '1';
+ 
+    $query = Transaction::where('user_id', Auth::id())
+        ->with('category')
+        ->orderByDesc('date');
+ 
+    $currentMonth = null;
+ 
+    if (! $showAll) {
+        // month arriva come 'YYYY-MM' (es. 2026-08) dai link di navigazione; default = mese corrente
+        $monthParam   = $request->query('month');
+        $currentMonth = $monthParam
+            ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
+            : Carbon::now()->startOfMonth();
+ 
+        $query->whereBetween('date', [
+            $currentMonth->copy()->startOfMonth(),
+            $currentMonth->copy()->endOfMonth(),
+        ]);
+    }
+ 
+    $transactions = $query->get();
+ 
+    return view('transactions.index', [
+        'transactions' => $transactions,
+        'currentMonth' => $currentMonth, // null quando $showAll = true
+        'showAll'      => $showAll,
+    ]);
 }
 
     /**
