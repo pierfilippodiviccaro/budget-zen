@@ -176,7 +176,7 @@
         <div class="db-nav-links">
             <a href="#" class="db-nav-item active">Dashboard</a>
             <a href="{{ route('admin.transactions.index') ?? '#' }}" class="db-nav-item">Transazioni</a>
-            <a href="#" class="db-nav-item">Budget</a>
+            <a href="{{ route('admin.budgets.index') ?? '#' }}" class="db-nav-item">Budget</a>
             <a href="#" class="db-nav-item">Analisi</a>
         </div>
         <div class="db-nav-right">
