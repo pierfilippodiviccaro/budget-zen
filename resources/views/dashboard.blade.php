@@ -181,7 +181,7 @@
         </div>
         <div class="db-nav-right">
             <div class="db-month-badge">
-                <div class="db-month-badge-dot"></div>
+                
                 {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}
             </div>
             <div class="db-user-avatar">
