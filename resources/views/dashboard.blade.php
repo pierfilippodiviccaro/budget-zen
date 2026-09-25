@@ -207,61 +207,75 @@
     </div>
 
     {{-- KPI Cards --}}
-    <div class="db-kpis">
-        {{-- Entrate --}}
-        <div class="db-kpi" style="--kpi-color:var(--teal); --kpi-pale:#E6F8F2;">
-            <div class="db-kpi-top">
-                <span class="db-kpi-label">Entrate Totali</span>
-                <div class="db-kpi-icon">
-                    <svg width="16" height="16" fill="none" stroke="#1B9E78" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-                    </svg>
-                </div>
-            </div>
-            <div class="db-kpi-value">+{{ number_format($income ?? 3450, 0, ',', '.') }}€</div>
-            <div class="db-kpi-footer">
-                <span class="db-kpi-sub">↑ +12% rispetto a settembre</span>
-                <button class="db-kpi-add" onclick="openModal('income')">+ Entrata</button>
+<div class="db-kpis">
+    {{-- Entrate --}}
+    <div class="db-kpi" style="--kpi-color:var(--teal); --kpi-pale:#E6F8F2;">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">Entrate Totali</span>
+            <div class="db-kpi-icon">
+                <svg width="16" height="16" fill="none" stroke="#1B9E78" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                </svg>
             </div>
         </div>
-
-        {{-- Uscite --}}
-        <div class="db-kpi" style="--kpi-color:var(--red); --kpi-pale:#FCEAEA;">
-            <div class="db-kpi-top">
-                <span class="db-kpi-label">Uscite Totali</span>
-                <div class="db-kpi-icon">
-                    <svg width="16" height="16" fill="none" stroke="#E05252" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" d="M2.25 6L9 12.75l4.306-4.307a11.95 11.95 0 015.814 5.519l2.74 1.22m0 0l-5.94 2.28m5.94-2.28l-2.28-5.941" />
-                    </svg>
-                </div>
-            </div>
-            <div class="db-kpi-value">-{{ number_format($expense ?? 1890, 0, ',', '.') }}€</div>
-            <div class="db-kpi-footer">
-                <span class="db-kpi-sub">54% del budget mensile</span>
-                <button class="db-kpi-add" onclick="openModal('expense')">+ Uscita</button>
-            </div>
-        </div>
-
-        {{-- Saldo --}}
-        @php $currentBalance = $balance ?? 1560; @endphp
-        <div class="db-kpi" style="--kpi-color:var(--navy); --kpi-pale:#E8EDF8;">
-            <div class="db-kpi-top">
-                <span class="db-kpi-label">Saldo Netto</span>
-                <div class="db-kpi-icon">
-                    <svg width="16" height="16" fill="none" stroke="#0B2545" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-            </div>
-            <div class="db-kpi-value" style="color:{{ $currentBalance >= 0 ? 'var(--teal)' : 'var(--red)' }}">
-                {{ $currentBalance >= 0 ? '+' : '' }}{{ number_format($currentBalance, 0, ',', '.') }}€
-            </div>
-            <div class="db-kpi-footer">
-                <span class="db-kpi-sub">{{ $currentBalance >= 0 ? 'Sei in attivo questo mese 🎉' : 'Attenzione alle spese ⚠️' }}</span>
-                <span class="db-kpi-sub" style="font-family:var(--font-mono); font-size:11px;">Tasso risp. 45%</span>
-            </div>
+        <div class="db-kpi-value">+{{ number_format($income ?? 0, 0, ',', '.') }}€</div>
+        <div class="db-kpi-footer">
+            <span class="db-kpi-sub">
+                @if(isset($incomeChange))
+                    {{ $incomeChange >= 0 ? '↑' : '↓' }} {{ $incomeChange >= 0 ? '+' : '' }}{{ round($incomeChange) }}% rispetto al mese scorso
+                @else
+                    Nessun dato mese scorso
+                @endif
+            </span>
+            <button class="db-kpi-add" onclick="openModal('income')">+ Entrata</button>
         </div>
     </div>
+
+    {{-- Uscite --}}
+    <div class="db-kpi" style="--kpi-color:var(--red); --kpi-pale:#FCEAEA;">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">Uscite Totali</span>
+            <div class="db-kpi-icon">
+                <svg width="16" height="16" fill="none" stroke="#E05252" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M2.25 6L9 12.75l4.306-4.307a11.95 11.95 0 015.814 5.519l2.74 1.22m0 0l-5.94 2.28m5.94-2.28l-2.28-5.941" />
+                </svg>
+            </div>
+        </div>
+        <div class="db-kpi-value">-{{ number_format($expense ?? 0, 0, ',', '.') }}€</div>
+        <div class="db-kpi-footer">
+            <span class="db-kpi-sub">
+                @if(isset($budgetPercentage))
+                    {{ $budgetPercentage }}% del budget mensile
+                @else
+                    Nessun budget impostato
+                @endif
+            </span>
+            <button class="db-kpi-add" onclick="openModal('expense')">+ Uscita</button>
+        </div>
+    </div>
+
+    {{-- Saldo --}}
+    @php $currentBalance = $balance ?? 0; @endphp
+    <div class="db-kpi" style="--kpi-color:var(--navy); --kpi-pale:#E8EDF8;">
+        <div class="db-kpi-top">
+            <span class="db-kpi-label">Saldo Netto</span>
+            <div class="db-kpi-icon">
+                <svg width="16" height="16" fill="none" stroke="#0B2545" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+        <div class="db-kpi-value" style="color:{{ $currentBalance >= 0 ? 'var(--teal)' : 'var(--red)' }}">
+            {{ $currentBalance >= 0 ? '+' : '' }}{{ number_format($currentBalance, 0, ',', '.') }}€
+        </div>
+        <div class="db-kpi-footer">
+            <span class="db-kpi-sub">{{ $currentBalance >= 0 ? 'Sei in attivo questo mese 🎉' : 'Attenzione alle spese ⚠️' }}</span>
+            <span class="db-kpi-sub" style="font-family:var(--font-mono); font-size:11px;">
+                Tasso risp. {{ $savingsRate ?? 0 }}%
+            </span>
+        </div>
+    </div>
+</div>
 
     {{-- Quick Stats Row --}}
     <div class="db-quick-stats">
@@ -381,7 +395,7 @@
                     <div class="db-card-title-dot" style="--dot-color:var(--blue)"></div>
                     Avanzamento Budget Mensile
                 </div>
-                <a href="#" class="db-card-link">Gestisci →</a>
+                <a href="{{ route('admin.budgets.index') ?? '#' }}" class="db-card-link">Gestisci →</a>
             </div>
             <div class="db-budget-list">
                 <div class="db-budget-item">
