@@ -57,6 +57,39 @@ class DashboardController extends Controller
         $budgetPercentage = $monthlyBudget > 0
             ? round(($expense / $monthlyBudget) * 100)
             : 0;
+            // --- NUOVO: budget e spese per categoria, per il blocco "Avanzamento Budget Mensile" ---
+$categoryBudgets = Budget::where('user_id', $userId)
+    ->where('month', Carbon::now()->month)
+    ->where('year', Carbon::now()->year)
+    ->pluck('amount', 'category_id');
+
+$spentByCategoryId = $monthTxns
+    ->where('type', 'expense')
+    ->groupBy('category_id')
+    ->map(fn($group) => $group->sum('amount'));
+
+$categories = Category::orderBy('name')->get();
+
+$budgetProgress = $categories
+    ->map(function ($cat) use ($categoryBudgets, $spentByCategoryId) {
+        $budgetAmount = (float) ($categoryBudgets[$cat->id] ?? 0);
+        if ($budgetAmount <= 0) {
+            return null;
+        }
+        $spent = (float) ($spentByCategoryId[$cat->id] ?? 0);
+        $pct = round(($spent / $budgetAmount) * 100);
+
+        return [
+            'name'      => $cat->name,
+            'budget'    => $budgetAmount,
+            'spent'     => $spent,
+            'pct'       => $pct,
+            'remaining' => $budgetAmount - $spent,
+            'state'     => $pct >= 100 ? 'danger' : ($pct >= 80 ? 'warn' : 'ok'),
+        ];
+    })
+    ->filter()
+    ->values();
 
         // Ultime 10 transazioni in assoluto (non filtrate per mese, per mostrare l'attività più recente)
         $recent = Transaction::where('user_id', $userId)
@@ -104,7 +137,8 @@ class DashboardController extends Controller
             'recent',
             'byCategory',
             'trend',
-            'categories'
+            'categories',
+            'budgetProgress'
             ));
     }
 }
