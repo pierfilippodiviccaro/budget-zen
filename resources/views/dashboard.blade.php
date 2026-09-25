@@ -193,7 +193,7 @@
     {{-- Header --}}
     <div class="db-header">
         <div class="db-header-left">
-            <h1>Buongiorno, <em>{{ explode(' ', Auth::user()->name ?? 'Mario')[0] }}</em>.</h1>
+            <h1>Buongiorno, <em>{{ explode(' ', Auth::user()->name ?? 'Mario')[0] }}</em></h1>
             <p>Panoramica finanziaria personale · {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</p>
         </div>
         <div class="db-header-right">
@@ -277,7 +277,7 @@
     </div>
 </div>
 
-    {{-- Quick Stats Row --}}
+       {{-- Quick Stats Row --}}
     <div class="db-quick-stats">
         <div class="db-qs" style="--qs-pale:#E6F1FB;">
             <div class="db-qs-icon">💳</div>
@@ -285,7 +285,7 @@
                 <div class="db-qs-label">Transazioni</div>
                 <div class="db-qs-value">
                     {{ isset($recent) ? $recent->count() : 28 }}
-                    <span class="db-qs-tag">+4 oggi</span>
+                  
                 </div>
             </div>
         </div>
@@ -343,7 +343,6 @@
                         </div>
                     @endforeach
                 @else
-                    {{-- Fallback mock display --}}
                     <div class="db-txn">
                         <div class="db-txn-icon" style="background:#E6F8F2">💼</div>
                         <div class="db-txn-info">
@@ -398,62 +397,34 @@
                 <a href="{{ route('admin.budgets.index') ?? '#' }}" class="db-card-link">Gestisci →</a>
             </div>
             <div class="db-budget-list">
-                <div class="db-budget-item">
-                    <div class="db-budget-top">
-                        <div class="db-budget-name">
-                            <div class="db-budget-name-dot" style="--state-color:var(--teal)"></div>
-                            Alimentari & Spesa
+                @forelse($budgetProgress ?? [] as $item)
+                    <div class="db-budget-item">
+                        <div class="db-budget-top">
+                            <div class="db-budget-name">
+                                <div class="db-budget-name-dot" style="--state-color:var(--{{ $item['state'] === 'ok' ? 'teal' : ($item['state'] === 'warn' ? 'amber' : 'red') }})"></div>
+                                {{ $item['name'] }}
+                            </div>
+                            <div class="db-budget-nums">
+                                <strong style="{{ $item['state'] === 'danger' ? 'color:var(--red)' : '' }}">{{ number_format($item['spent'], 0, ',', '.') }}€</strong> / {{ number_format($item['budget'], 0, ',', '.') }}€
+                            </div>
                         </div>
-                        <div class="db-budget-nums"><strong>420€</strong> / 600€</div>
-                    </div>
-                    <div class="db-track"><div class="db-fill ok" style="width: 70%;"></div></div>
-                    <div class="db-budget-bottom">
-                        <span class="db-budget-pct ok">70% utilizzato</span>
-                        <span class="db-budget-remaining">180€ rimanenti</span>
-                    </div>
-                </div>
-                <div class="db-budget-item">
-                    <div class="db-budget-top">
-                        <div class="db-budget-name">
-                            <div class="db-budget-name-dot" style="--state-color:var(--amber)"></div>
-                            Utenze & Bollette
+                        <div class="db-track"><div class="db-fill {{ $item['state'] }}" style="width: {{ min($item['pct'], 100) }}%;"></div></div>
+                        <div class="db-budget-bottom">
+                            <span class="db-budget-pct {{ $item['state'] }}">
+                                {{ $item['pct'] }}%{{ $item['state'] === 'danger' ? ' (Sforato)' : ' utilizzato' }}
+                            </span>
+                            <span class="db-budget-remaining" style="{{ $item['remaining'] < 0 ? 'color:var(--red)' : '' }}">
+                                {{ $item['remaining'] >= 0 ? number_format($item['remaining'], 0, ',', '.') . '€ rimanenti' : number_format(abs($item['remaining']), 0, ',', '.') . '€ extra budget' }}
+                            </span>
                         </div>
-                        <div class="db-budget-nums"><strong>260€</strong> / 300€</div>
                     </div>
-                    <div class="db-track"><div class="db-fill warn" style="width: 86%;"></div></div>
-                    <div class="db-budget-bottom">
-                        <span class="db-budget-pct warn">86% utilizzato</span>
-                        <span class="db-budget-remaining">40€ rimanenti</span>
+                @empty
+                    <div style="text-align:center; padding: 24px 10px; color: var(--muted); font-size: 13px;">
+                        Nessun budget impostato per questo mese.
+                        <br>
+                        <a href="{{ route('admin.budgets.create') ?? '#' }}" style="color: var(--blue); font-weight: 500;">Impostane uno →</a>
                     </div>
-                </div>
-                <div class="db-budget-item">
-                    <div class="db-budget-top">
-                        <div class="db-budget-name">
-                            <div class="db-budget-name-dot" style="--state-color:var(--teal)"></div>
-                            Svago & Tempo Libero
-                        </div>
-                        <div class="db-budget-nums"><strong>190€</strong> / 400€</div>
-                    </div>
-                    <div class="db-track"><div class="db-fill ok" style="width: 47%;"></div></div>
-                    <div class="db-budget-bottom">
-                        <span class="db-budget-pct ok">47% utilizzato</span>
-                        <span class="db-budget-remaining">210€ rimanenti</span>
-                    </div>
-                </div>
-                <div class="db-budget-item">
-                    <div class="db-budget-top">
-                        <div class="db-budget-name">
-                            <div class="db-budget-name-dot" style="--state-color:var(--red)"></div>
-                            Shopping & Abbigliamento
-                        </div>
-                        <div class="db-budget-nums"><strong style="color:var(--red)">210€</strong> / 200€</div>
-                    </div>
-                    <div class="db-track"><div class="db-fill danger" style="width: 100%;"></div></div>
-                    <div class="db-budget-bottom">
-                        <span class="db-budget-pct danger">105% (Sforato)</span>
-                        <span class="db-budget-remaining" style="color:var(--red)">-10€ extra budget</span>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </div>
