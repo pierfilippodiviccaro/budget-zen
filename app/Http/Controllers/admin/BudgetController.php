@@ -5,20 +5,45 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Budget;
 use App\Models\Category;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class BudgetController extends Controller
 {
     /**
-     * Pagina principale dei budget (lista / panoramica).
-     * Per ora reindirizza alla creazione del mese corrente.
+     * Pagina principale dei budget: mostra la panoramica del mese
+     * (budget impostato per categoria + quanto speso finora).
      */
-    public function index()
+    public function index(Request $request)
     {
-        return redirect()->route('admin.budgets.create', [
-            'month' => now()->month,
-            'year'  => now()->year,
-        ]);
+        $month = (int) $request->query('month', now()->month);
+        $year  = (int) $request->query('year', now()->year);
+
+        $userId = auth()->id();
+
+        // Budget impostati per il mese, indicizzati per categoria
+        $budgets = Budget::where('user_id', $userId)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->pluck('amount', 'category_id');
+
+        // Spese effettive per categoria nello stesso mese
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+        $endOfMonth   = Carbon::create($year, $month, 1)->endOfMonth();
+
+        $spentByCategory = Transaction::where('user_id', $userId)
+            ->where('type', 'expense')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->selectRaw('category_id, SUM(amount) as total')
+            ->groupBy('category_id')
+            ->pluck('total', 'category_id');
+
+        $categories = Category::orderBy('name')->get();
+
+        return view('budgets.index', compact(
+            'categories', 'budgets', 'spentByCategory', 'month', 'year'
+        ));
     }
 
     /**
@@ -33,7 +58,7 @@ class BudgetController extends Controller
 
         $budgets = Budget::where('month', $month)
             ->where('year', $year)
-            ->pluck('amount', 'category_id'); 
+            ->pluck('amount', 'category_id');
 
         return view('budgets.create', compact('categories', 'budgets', 'month', 'year'));
     }
@@ -70,7 +95,7 @@ class BudgetController extends Controller
         }
 
         return redirect()
-            ->route('budgets.create', [
+            ->route('admin.budgets.index', [
                 'month' => $validated['month'],
                 'year'  => $validated['year'],
             ])
