@@ -157,7 +157,7 @@
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Modifica Budget
+                aggiorna il Budget
             </a>
         </div>
     </div>
