@@ -127,7 +127,7 @@
                 <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-[#0B2545]/80">
                     <a href="#funzionalita" class="hover:text-[#1463A8] transition">Funzionalità</a>
                     <a href="#metriche" class="hover:text-[#1463A8] transition">Numeri</a>
-                    <a href="#sicurezza" class="hover:text-[#1463A8] transition">Sicurezza</a>
+                    
                 </nav>
 
                 <div class="flex items-center gap-3">
