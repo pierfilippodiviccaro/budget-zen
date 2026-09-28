@@ -56,7 +56,8 @@ class BudgetController extends Controller
 
         $categories = Category::orderBy('name')->get();
 
-        $budgets = Budget::where('month', $month)
+        $budgets = Budget::where('user_id', auth()->id())
+            ->where('month', $month)
             ->where('year', $year)
             ->pluck('amount', 'category_id');
 
@@ -69,29 +70,33 @@ class BudgetController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'month' => 'required|integer|min:1|max:12',
-            'year'  => 'required|integer|min:2000|max:2100',
-            'amounts' => 'array',
+            'month'     => 'required|integer|min:1|max:12',
+            'year'      => 'required|integer|min:2000|max:2100',
+            'amounts'   => 'array',
             'amounts.*' => 'nullable|numeric|min:0',
         ]);
 
-        foreach ($validated['amounts'] as $categoryId => $amount) {
-            if ($amount === null || $amount === '') {
-                Budget::where('category_id', $categoryId)
-                    ->where('month', $validated['month'])
-                    ->where('year', $validated['year'])
-                    ->delete();
+        $userId = auth()->id();
+        $validCategoryIds = Category::pluck('id')->all();
+
+        foreach ($validated['amounts'] ?? [] as $categoryId => $amount) {
+            if (! in_array((int) $categoryId, $validCategoryIds, true)) {
                 continue;
             }
 
-            Budget::updateOrCreate(
-                [
-                    'category_id' => $categoryId,
-                    'month' => $validated['month'],
-                    'year' => $validated['year'],
-                ],
-                ['amount' => $amount]
-            );
+            $scope = [
+                'user_id'     => $userId,
+                'category_id' => $categoryId,
+                'month'       => $validated['month'],
+                'year'        => $validated['year'],
+            ];
+
+            if ($amount === null || $amount === '') {
+                Budget::where($scope)->delete();
+                continue;
+            }
+
+            Budget::updateOrCreate($scope, ['amount' => $amount]);
         }
 
         return redirect()
